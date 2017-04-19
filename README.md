@@ -10,5 +10,5 @@ There will be a file named test in your binary's folder
 
 ## Requirement
 
-> python 2.7
-> pwntools
+* python 2.7
+* pwntools

@@ -17,5 +17,5 @@ There will be a file named test in your binary's folder
 
 ## Known issues
 
-* Not support for ELF32 with PIE enabled, it will just crash.If you know how to solve it,pull a request plz.
+* Not support for ELF32 with PIE enabled, it will just crash.If you know how to solve it,plz contact admin@00v.in.
 * Ugly way in ELF64 with PIE enabled, even it just works.

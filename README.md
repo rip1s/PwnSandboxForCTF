@@ -1,6 +1,8 @@
 # PwnSandboxForCTF
 Yet another sandbox for CTF challenge in AWD mode
 
+Just a chroot :)
+
 ELF64 and ELF32 supportd
 
 ## Usage

@@ -348,7 +348,6 @@ else:
         final = asm("mov rax,{};jmp rax".format(hex(e.entrypoint)))
     else:
         final = asm("mov eax,{};jmp eax".format(hex(e.entrypoint)))
-patch = []
 code = []
 for x in a:
     code.append(ord(x))

@@ -39,8 +39,7 @@ if is64:
         xor	esi, esi
         xor	eax, eax
         call	waitpid
-        xor	eax, eax
-        ret
+        call    exit
 
     clone	:
         sub	rsi, 0x10

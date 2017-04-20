@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# __author__ = "nonick"
+
 from pwn import *
 import sys
 import lief

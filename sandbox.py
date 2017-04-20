@@ -116,7 +116,7 @@ if is64:
         mov	esi, 1
         call	open
         mov r10,rax
-        
+
         /* push '0 0 1' */
         mov rax, 0x101010101010101
         push rax
@@ -131,7 +131,7 @@ if is64:
         call	write
         mov	edi, ebx
         call	close
-        
+
         /* push '/proc/self/gid_map' */
         push 0x1010101 ^ 0x7061
         xor dword ptr [rsp], 0x1010101
@@ -158,7 +158,7 @@ if is64:
         call	write
         mov	edi, ebx
         call	close
-        
+
         /* push '/tmp\x00' */
         push 0x706d742f
 
@@ -295,7 +295,7 @@ else:
         push 1
         dec byte ptr [esp]
         push 0x706d742f
-        
+
         mov	ebx, esp
         call	chroot
         test	eax, eax
@@ -309,29 +309,40 @@ log.success('Original Entry Point:' + hex(e.entrypoint))
 if e.is_pie:
     log.info('PIE detected')
     if is64:
+#         performance issues
+#        final = asm('''
+#        /*memory brute force method*/
+#        xor rbx,rbx
+#        mov rdi,0x0000555555550000
+#        mov rsi,0x1000
+#        mov rdx,5
+#    l:
+#        add rdi,0x1000
+#        call mprotect
+#        cmp rax,rbx
+#        jl l
+#        add rdi,{}
+#        jmp rdi
+#    mprotect:
+#        xor rax,rax
+#        mov al,10
+#        syscall
+#        ret
+#        '''.format(hex(e.entrypoint)))
         final = asm('''
-        /*memory brute force method*/
-        xor rbx,rbx
-        mov rdi,0x0000555555550000
-        mov rsi,0x1000
-        mov rdx,5
-    l:
-        add rdi,0x1000
-        call mprotect
-        cmp rax,rbx
-        jl l
-        add rdi,{}
-        jmp rdi
-    mprotect:
-        xor rax,rax
-        mov al,10
-        syscall
-        ret
+        call getaddr
+        getaddr:
+        pop rax
+        and rax,0xfffffffffffff000
+        /*Really ugly way...*/
+        sub rax,0xA000
+        add rax,{}
+        jmp rax
         '''.format(hex(e.entrypoint)))
     else:
         final = asm('''
         xor esi,esi
-        mov ebx,esi
+        mov ebx,0x56550000
         mov ecx,0x1000
         mov edx,5
     l:

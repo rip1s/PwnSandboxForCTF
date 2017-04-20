@@ -3,7 +3,7 @@ Yet another sandbox for CTF challenge in AWD mode
 
 Just chroot it! :)
 
-ELF64 and ELF32 supportd,including PIE
+ELF64 and ELF32 supported,including PIE
 
 ## Usage
 

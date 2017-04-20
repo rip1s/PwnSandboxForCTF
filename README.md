@@ -10,7 +10,7 @@ ELF64 and ELF32 supportd,including PIE
 ```bash
 python ./sandbox.py /path/to/your/binary
 ```
-There will be a binary output named test in your script's folder
+There will be a binary output named binary_sandbox in your binary's folder
 
 ## Requirement
 

@@ -159,8 +159,11 @@ if is64:
         mov	edi, ebx
         call	close
 
-        /* push '/tmp\x00' */
-        push 0x706d742f
+        /* push '/root\x00' */
+        mov rax, 0x101010101010101
+        push rax
+        mov rax, 0x101010101010101 ^ 0x746f6f722f
+        xor [rsp], rax
 
         mov	rdi, rsp
         call	chroot
@@ -291,10 +294,9 @@ else:
         call	write
         call	close
 
-        /* push '/tmp\\x00' */
-        push 1
-        dec byte ptr [esp]
-        push 0x706d742f
+        /* push '/root\x00' */
+        push 0x74
+        push 0x6f6f722f
 
         mov	ebx, esp
         call	chroot

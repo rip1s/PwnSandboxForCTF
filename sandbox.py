@@ -19,7 +19,21 @@ if e.header.machine_type == lief.ELF.ARCH.x86_64:
 if is64:
     context.arch = 'amd64'
     asmcode = '''
-        pop r15
+        push rbx
+        push rcx
+        push rdx
+        push rsi
+        push rdi
+        push rbp
+        push r8
+        push r9
+        push r10
+        push r11
+        push r12
+        push r13
+        push r14
+        push r15
+        mov r15,rsp
         xor	r9d, r9d
         mov	r8, 0x0FFFFFFFFFFFFFFFF
         xor	edi, edi
@@ -172,7 +186,14 @@ if is64:
 else:
     context.arch = 'i386'
     asmcode = '''
-        pop ebp
+        push eax
+        push ebx
+        push ecx
+        push edx
+        push ebp
+        push esi
+        push edi
+        mov ebp,esp
         xor edi,edi
         dec edi
         xor	ebx,ebx
@@ -246,8 +267,8 @@ else:
     getaddr:
         call getaddr2
     jail	:
+        add esp,12
         pop ebp
-
         /* push '/proc/self/uid_map\\x00' */
         push 0x1010101
         xor dword ptr [esp], 0x1017160
@@ -336,7 +357,25 @@ if e.is_pie:
         /*Really ugly way...*/
         sub rax,0xA000
         add rax,{}
-        jmp rax
+        /*Now restore registers NOTE: RAX discarded*/
+        mov rsp,r15
+        pop r15
+        pop r14
+        pop r13
+        pop r12
+        pop r11
+        pop r10
+        pop r9
+        pop r8
+        pop rbp
+        pop rdi
+        pop rsi
+        pop rdx
+        pop rcx
+        pop rbx
+        push rax
+        xor rax,rax
+        ret
         '''.format(hex(e.entrypoint)))
     else:
         final = asm('''
@@ -350,7 +389,18 @@ if e.is_pie:
         cmp eax,esi
         jl l
         add ebx,{}
-        jmp ebx
+        /*Now restore registers NOTE: EAX discarded*/
+        mov eax,ebx
+        mov esp,ebp
+        pop edi
+        pop esi
+        pop ebp
+        pop edx
+        pop ecx
+        pop ebx
+        push eax
+        xor eax,eax
+        ret
     mprotect:
         xor eax,eax
         mov al,125
@@ -359,9 +409,43 @@ if e.is_pie:
         '''.format(hex(e.entrypoint)))
 else:
     if is64:
-        final = asm("mov rax,{};jmp rax".format(hex(e.entrypoint)))
+        final = asm('''
+        mov rax,{}
+        /*Now restore registers NOTE: RAX discarded*/
+        mov rsp,r15
+        pop r15
+        pop r14
+        pop r13
+        pop r12
+        pop r11
+        pop r10
+        pop r9
+        pop r8
+        pop rbp
+        pop rdi
+        pop rsi
+        pop rdx
+        pop rcx
+        pop rbx
+        push rax
+        xor rax,rax
+        ret
+        '''.format(hex(e.entrypoint)))
     else:
-        final = asm("mov eax,{};jmp eax".format(hex(e.entrypoint)))
+        final = asm('''
+        mov eax,{}
+        /*Now restore registers NOTE: EAX discarded*/
+        mov esp,ebp
+        pop edi
+        pop esi
+        pop ebp
+        pop edx
+        pop ecx
+        pop ebx
+        push eax
+        xor eax,eax
+        ret
+        '''.format(hex(e.entrypoint)))
 code = []
 for x in a:
     code.append(ord(x))

@@ -19,7 +19,7 @@ There will be a binary output named binary_sandbox in your binary's folder
 
 ## Known issues
 
-* centos NOT supported
+* Centos **NOT supported**
 
 ## TODO
 

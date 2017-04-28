@@ -17,6 +17,11 @@ There will be a binary output named binary_sandbox in your binary's folder
 * python 2.7
 * pwntools
 
+## Known issues
+
+* centos NOT supported
+
 ## TODO
 
 * Find a clean method to jump back to oep 
+* New method to support centos

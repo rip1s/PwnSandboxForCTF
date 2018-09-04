@@ -329,33 +329,38 @@ log.success('Original Entry Point:' + hex(e.entrypoint))
 if e.is_pie:
     log.info('PIE detected')
     if is64:
-#         performance issues
-#        final = asm('''
-#        /*memory brute force method*/
-#        xor rbx,rbx
-#        mov rdi,0x0000555555550000
-#        mov rsi,0x1000
-#        mov rdx,5
-#    l:
-#        add rdi,0x1000
-#        call mprotect
-#        cmp rax,rbx
-#        jl l
-#        add rdi,{}
-#        jmp rdi
-#    mprotect:
-#        xor rax,rax
-#        mov al,10
-#        syscall
-#        ret
-#        '''.format(hex(e.entrypoint)))
+        #         performance issues
+        #        final = asm('''
+        #        /*memory brute force method*/
+        #        xor rbx,rbx
+        #        mov rdi,0x0000555555550000
+        #        mov rsi,0x1000
+        #        mov rdx,5
+        #    l:
+        #        add rdi,0x1000
+        #        call mprotect
+        #        cmp rax,rbx
+        #        jl l
+        #        add rdi,{}
+        #        jmp rdi
+        #    mprotect:
+        #        xor rax,rax
+        #        mov al,10
+        #        syscall
+        #        ret
+        #        '''.format(hex(e.entrypoint)))
         final = asm('''
         call getaddr
         getaddr:
-        pop rax
-        and rax,0xfffffffffffff000
+        pop rdi
+        and rdi,0xfffffffffffff000
+        mov rsi,0x1000
+        mov rdx,5
+        mov rax,10
+        syscall
+        mov rax,rdi
         /*Really ugly way...*/
-        sub rax,0xA000
+        sub rax,0x4000
         add rax,{}
         /*Now restore registers NOTE: RAX discarded*/
         mov rsp,r15
@@ -410,6 +415,14 @@ if e.is_pie:
 else:
     if is64:
         final = asm('''
+        call getaddr
+        getaddr:
+        pop rdi
+        and rdi,0xfffffffffffff000
+        mov rsi,0x1000
+        mov rdx,5
+        mov rax,10
+        syscall
         mov rax,{}
         /*Now restore registers NOTE: RAX discarded*/
         mov rsp,r15
@@ -457,7 +470,10 @@ segment.type = lief.ELF.SEGMENT_TYPES.LOAD
 segment.flag = lief.ELF.SEGMENT_FLAGS.PF_R | lief.ELF.SEGMENT_FLAGS.PF_W | lief.ELF.SEGMENT_FLAGS.PF_X
 segment.data = code
 segment.alignment = 8
-segment = e.add_segment(segment, base=0x1000, force_note=True)
+if e.is_pie:
+    segment = e.add_segment(segment, base=0x1000, force_note=True)
+else:
+    segment = e.add_segment(segment, base=0x10000, force_note=True)
 log.success('Add segment done.')
 e.header.entrypoint = segment.virtual_address
 log.success('New Entry Point:' + hex(segment.virtual_address))

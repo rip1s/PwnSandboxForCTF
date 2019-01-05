@@ -1,14 +1,31 @@
 # PwnSandboxForCTF
 Yet another sandbox for CTF challenge in AWD mode
 
-Just chroot it! :)
+This is a ptrace sandbox. ~~(It was a chroot sandbox)~~
 
-ELF64 and ELF32 supported,including PIE
+It will send PTRACE_KILL under certain circumstance:
 
+* Child process attempting to open files with 'flag' in its name by open or openat. (/tmp/asdflagasd etc.)
+* Child process attempting to call illegal syscall. (execve/execveat)
+
+ELF64 and ELF32 supported, including PIE
+
+## Installation
+```bash
+pip install pwnsandbox
+```
 ## Usage
 
 ```bash
-python ./sandbox.py /path/to/your/binary
+usage: pwn_sandbox [-h] input_bin
+
+Yet another pwn sandbox for CTF by @unamer(https://github.com/unamer)
+
+positional arguments:
+  input_bin   /path/to/your/input binary
+
+optional arguments:
+  -h, --help  show this help message and exit
 ```
 There will be a binary output named binary_sandbox in your binary's folder
 
@@ -16,12 +33,13 @@ There will be a binary output named binary_sandbox in your binary's folder
 
 * python 2.7
 * pwntools
+* lief
 
 ## Known issues
 
-* Centos **NOT supported**
+* ~~Centos **NOT supported**~~
 
 ## TODO
 
-* Find a clean method to jump back to oep 
-* New method to support centos
+* ~~Find a clean method to jump back to oep~~
+* ~~New method to support centos~~

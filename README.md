@@ -14,6 +14,11 @@ ELF64 and ELF32 supported, including PIE
 ```bash
 pip install pwnsandbox
 ```
+or
+```bash
+python setup.py install
+```
+It will install a console script 'pwn_sandbox'.
 ## Usage
 
 ```bash
@@ -38,6 +43,7 @@ There will be a binary output named binary_sandbox in your binary's folder
 ## Known issues
 
 * ~~Centos **NOT supported**~~
+* Might crash on ELF contains multi loadable segments. (I haven't seen this type of ELF yet)
 
 ## TODO
 

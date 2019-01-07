@@ -488,8 +488,10 @@ def sandbox(input):
         '''
     # NOTE: here I assume your input contains only one LOAD segment!
     # Shellcode will be placed after this segment.
-    s = e.get(lief.ELF.SEGMENT_TYPES.LOAD)
-    s_size = s.virtual_size
+    for s in e.segments:
+        if s.type==lief.ELF.SEGMENT_TYPES.LOAD:
+            s_size = s.virtual_size
+            break
     if s_size % 0x1000:
         s_size += 0x1000 - (s_size % 0x1000)
     log.success('Load segment memory size:' + hex(s_size))
@@ -599,13 +601,11 @@ def sandbox(input):
     log.info('Shellcode length:' + hex(len(code)))
     segment = lief.ELF.Segment()
     segment.type = lief.ELF.SEGMENT_TYPES.LOAD
-    segment.add(lief.ELF.SEGMENT_FLAGS.R)
-    segment.add(lief.ELF.SEGMENT_FLAGS.W)
-    segment.add(lief.ELF.SEGMENT_FLAGS.X)
-    segment.content = code
+    segment.flag = lief.ELF.SEGMENT_FLAGS.PF_R | lief.ELF.SEGMENT_FLAGS.PF_W | lief.ELF.SEGMENT_FLAGS.PF_X
+    segment.data = code
     segment.alignment = 8
 
-    segment = e.add(segment, 0x10000)
+    segment = e.add_segment(segment, base=0x10000, force_note=True)
     log.success('Add segment done.')
     e.header.entrypoint = segment.virtual_address
     log.success('New Entry Point:' + hex(segment.virtual_address))

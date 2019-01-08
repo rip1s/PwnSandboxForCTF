@@ -5,8 +5,9 @@ This is a ptrace sandbox. ~~(It was a chroot sandbox)~~
 
 It will send PTRACE_KILL under certain circumstances:
 
-* Child process attempting to open files with 'flag' in its name by open or openat. (/tmp/asdflagasd etc.)
-* Child process attempting to call illegal syscall. (execve/execveat)
+* Child process attempting to open files with 'flag' in its name by open/openat/name_to_handle_at. (/tmp/asdflagasd etc.)
+* Child process attempting to create a symlink or hardlink for file with 'flag' in its name by symlink/symlinkat/link.
+* Child process attempting to call illegal syscall. (execve/execveat/stub_execveat)
 
 ELF64 and ELF32 supported, including PIE
 
@@ -51,3 +52,20 @@ There will be a binary output named binary_sandbox in your binary's folder
 
 * ~~Find a clean method to jump back to oep~~
 * ~~New method to support centos~~
+
+## Changelog
+
+### [0.3] - 2019-01-08
+#### Added
+- Various bug fix.
+- Add more syscall in filter scope.
+
+### [0.2] - 2019-01-07
+#### Added
+- Update project description.
+- Revert lief version.
+
+### [0.1] - 2019-01-05
+#### Added
+- Reconstruct project.
+- Initial ptrace sandbox.

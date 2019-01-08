@@ -19,472 +19,514 @@ def sandbox(input):
         context.arch = 'amd64'
         asmcode = '''
             push    r15
-            push    r14
-            push    r13
-            push    r12
-            push    rbp
-            push    rbx
-            sub     rsp, 0x1118
-            xor     eax, eax
-            call    fork
-            test    eax, eax
-            jz      child
-            lea     rax, [rsp+0x1148-0x1128]
-            mov     dword ptr [rsp+0x1148-0x1050], 0x67616C66
-            mov     byte ptr [rsp+0x1148-0x104C], 0
-            lea     r14, [rsp+0x1148-0x112c]
-            lea     r12, [rsp+0x1148-0x48]
-            lea     r13, [rsp+0x1148-0x1050]
-            mov     qword ptr [rsp+0x1148-0x1148], rax
-            lea     rax, [rsp+0x1148-0x1048]
-            mov     qword ptr [rsp+0x1148-0x1140], rax
-            jmp     loc_400656
+    push    r14
+    push    r13
+    push    r12
+    push    rbp
+    push    rbx
+    sub     rsp, 0x1118
+    call    fork
+    test    eax, eax
+    jz      child
+    lea     rax, byte ptr[rsp+0x1148-0x1128]
+    lea     r13, byte ptr[rsp+0x1148-0x1048]
+    mov     dword ptr[rsp+0x1148-0x1050], 0x67616C66
+    mov     byte ptr[rsp+0x1148-0x104C], 0
+    lea     r14, dword ptr[rsp+0x1148-0x112C]
+    mov     qword ptr[rsp+0x1148-0x1140], rax
+    lea     r12, [r13+0x1000]
+    jmp     short loc_40064B
+loc_400608:                  
+    lea     rdx, [rax-0x56]
+    test    rdx, 0x0FFFFFFFFFFFFFFFD
+    jz      loc_4007D8
+    cmp     rax, 0x3B
+    jz      loc_4007E8
+    cmp     rax, 0x142
+    jz      loc_4007E8
+    cmp     rax, 0x38
+    jz      loc_40081B
+loc_400639:                  
+    xor     ecx, ecx
+    xor     edx, edx
+    mov     esi, ebx
+    mov     edi, 0x18
+    xor     eax, eax
+    call    ptrace
+loc_40064B:                  
+    mov     edx, 0x40000000  
+    mov     rsi, r14    
+    mov     edi, 0x0FFFFFFFF 
+    call    waitpid
+    test    eax, eax
+    mov     ebx, eax
+    jz      loc_4007F4
+    mov     eax, dword ptr[rsp+0x1148-0x112C]
+    and     eax, 0x7F
+    jz      loc_4007F4
+    add     eax, 1
+    cmp     al, 1
+    jg      loc_4007F4
+    xor     ecx, ecx
+    xor     edx, edx
+    mov     esi, ebx
+    mov     edi, 0x18
+    xor     eax, eax
+    call    ptrace
+    xor     edx, edx    
+    mov     rsi, r14    
+    mov     edi, ebx    
+    call    waitpid
+    mov     rcx, qword ptr[rsp+0x1148-0x1140]
+    xor     edx, edx
+    xor     eax, eax
+    mov     esi, ebx
+    mov     edi, 0x0C
+    call    ptrace
+    mov     rax, qword ptr[rsp+0x1148-0x10B0]
+    cmp     rax, 0xffffffffffffffff
+    jz      loc_4007F4
+    lea     rcx, [rax-0x101]
+    cmp     rax, 2
+    setz    dl
+    cmp     rcx, 0x2E
+    ja      short loc_4006E3
+    mov     rdi, 0x400000000201
+    shr     rdi, cl
+    mov     rcx, rdi
+    and     ecx, 1
+    or      edx, ecx
+loc_4006E3:                  
+    test    dl, dl
+    jz      loc_400608
+    cmp     rax, 2
+    jz      loc_4007D8
+    lea     rdx, [rax-0x56]
+    test    rdx, 0x0FFFFFFFFFFFFFFFD
+    jz      loc_4007D8
+    cmp     rax, 0x10A
+    mov     rbp, qword ptr[rsp+0x1148-0x10C0]
+    jz      loc_4007D8
+loc_40071A:                  
+    mov     r15, r13
+    sub     rbp, r13
+    jmp     short loc_400735
+loc_400728:                  
+    test    al, al
+    jz      short loc_40075A
+    add     r15, 2
+    cmp     r12, r15
+    jz      short loc_40075A
+loc_400735:                  
+    lea     rdx, [rbp+r15+0]
+    xor     ecx, ecx
+    xor     eax, eax
+    mov     esi, ebx
+    mov     edi, 1
+    call    ptrace
+    mov     edx, eax
+    mov     [r15], al
+    sar     edx, 8
+    test    dl, dl
+    mov     [r15+1], dl
+    jnz     short loc_400728
+loc_40075A:                  
+    lea     r9, dword ptr[rsp+0x1148-0x1050]
+    mov     rdi, r13
+    lea     rax, [r9+1]
+loc_400770:                  
+    add     rax, 1
+    add     rdi, 1
+    cmp     byte ptr [rax], 0
+    jnz     short loc_400770
+    cmp     byte ptr [rdi], 0
+    mov     r8, r13
+    jz      loc_400639
+loc_400790:                  
+    cmp     byte ptr [r8], 0x66
+    mov     rdx, r8
+    mov     rax, r9
+    jz      short loc_4007AD
+    jmp     short loc_4007C1
+loc_4007A0:                  
+    movzx   esi, byte ptr [rax]
+    cmp     cl, sil
+    jnz     short loc_4007BC
+    test    sil, sil
+    jz      short loc_4007BC
+loc_4007AD:                  
+    add     rdx, 1
+    movzx   ecx, byte ptr [rdx]
+    add     rax, 1
+    test    cl, cl
+    jnz     short loc_4007A0
+loc_4007BC:                  
+    cmp     byte ptr [rax], 0
+    jz      short loc_4007E8
+loc_4007C1:                  
+    add     rdi, 1
+    add     r8, 1
+    cmp     byte ptr [rdi], 0
+    jnz     short loc_400790
+    jmp     loc_400639
+loc_4007D8:                  
+    mov     rbp, qword ptr[rsp+0x1148-0x10B8]
+    jmp     loc_40071A
+loc_4007E8:                  
+    mov     esi, 9
+    mov     edi, ebx
+    call    kill
+loc_4007F4:                  
+    mov     eax,231
+    syscall
+    hlt
+
+loc_40081B:                  
+    mov     rcx, qword ptr[rsp+0x1148-0x1140]
+    xor     edx, edx
+    mov     esi, ebx
+    mov     edi, 0x0D
+    xor     eax, eax
+    or      qword ptr[rsp+0x1148-0x10B8], 0x2000
+    call    ptrace
+    jmp     loc_400639
+waitpid:
+    xor     r10, r10
+    mov     rax, r10
+    mov     al, 0x3D
+    syscall
+    ret
+
+fork:
+    mov rax, 57
+    syscall
+    ret
+
+ptrace:
+    sub     rsp, 0x68
+    lea     r8d, [rdi-1]
+    xor     eax, eax
+    lea     rax, [rsp+0x68+8]
+    mov     qword ptr [rsp+0x68-0x30], rsi
+    mov     qword ptr [rsp+0x68-0x28], rdx
+    mov     qword ptr [rsp+0x68-0x20], rcx
+    lea     r10, [rsp+0x68-0x60]
+    cmp     r8d, 3
+    mov     qword ptr [rsp+0x68-0x50], rax
+    lea     rax, [rsp+0x68-0x38]
+    mov     qword ptr [rsp+0x68-0x58], 0x18
+    mov     esi, [rax+8]    
+    mov     rdx, [rax+0x10]  
+    mov     [rsp+0x68-0x48], rax
+    cmovnb  r10, [rax+0x18]  
+    mov     eax, 0x65
+    syscall     
+    cmp     r8d, 2
+    ja      ptrace_ret
+    mov     rax, [rsp+8]
+ptrace_ret:
+    add     rsp, 0x68
+    ret
+
+kill:
+    mov     eax,0x3e
+    syscall
+    ret
     
-    loc_400618:                     
-            cmp     rax, 0x101
-            jz      loc_4006C1
-            cmp     rax, 0x3B
-            jz      loc_400798
-            cmp     rax, 0x142
-            jz      loc_400798
-            cmp     rax, 0x38
-            jz      loc_4007D1
-    loc_400644:                     
-    
-            xor     ecx, ecx
-            xor     edx, edx
-            mov     esi, ebx
-            mov     edi, 0x18
-            xor     eax, eax
-            call    ptrace
-    loc_400656:                     
-            mov     edx, 0x40000000  
-            mov     rsi, r14        
-            mov     edi, 0xFFFFFFFF
-            call    waitpid
-            test    eax, eax
-            mov     ebx, eax
-            jz      loc_4007AA
-            test    byte ptr [rsp+0x1148-0x112c], 0x7F
-            jz      loc_4007AA
-            xor     ecx, ecx
-            xor     edx, edx
-            mov     esi, ebx
-            mov     edi, 0x18
-            xor     eax, eax
-            call    ptrace
-            xor     edx, edx        
-            mov     rsi, r14        
-            mov     edi, ebx        
-            call    waitpid
-            mov     rcx, [rsp+0x1148-0x1148]
-            xor     edx, edx
-            xor     eax, eax
-            mov     esi, ebx
-            mov     edi, 0xC
-            call    ptrace
-            mov     rax, [rsp+0x1148-0x10B0]
-            cmp     rax, 2
-            jnz     loc_400618
-    loc_4006C1:                     
-            cmp     rax, 2
-            mov     rbp, qword ptr [rsp+0x1148-0x10B8]
-            jz      loc_4006D7
-            mov     rbp, qword ptr [rsp+0x1148-0x10C0]
-    loc_4006D7:                     
-            mov     rax, qword ptr[rsp+0x1148-0x1140]
-            mov     r15, rax
-            sub     rbp, rax
-            jmp     loc_4006F5
-    
-    loc_4006E8:                     
-            test    al, al
-            jz      loc_40071A
-            add     r15, 2
-            cmp     r15, r12
-            jz      loc_40071A
-    loc_4006F5:                     
-            lea     rdx, [rbp+r15+0]
-            xor     ecx, ecx
-            xor     eax, eax
-            mov     esi, ebx
-            mov     edi, 1
-            call    ptrace
-            mov     edx, eax
-            mov     byte ptr [r15], al
-            sar     edx, 8
-            test    dl, dl
-            mov     byte ptr [r15+1], dl
-            jnz     loc_4006E8
-    loc_40071A:                     
-    
-            mov     rdi, qword ptr [rsp+0x1148-0x1140]
-            lea     rax, [r13+1]
-    loc_400728:                     
-            add     rax, 1
-            add     rdi, 1
-            cmp     byte ptr [rax], 0
-            jnz     loc_400728
-            cmp     byte ptr [rdi], 0
-            mov     r8, qword ptr [rsp+0x1148-0x1140]
-            jz      loc_400644
-    loc_400748:                     
-            cmp     byte ptr [r8], 0x66
-            mov     rdx, r8
-            mov     rax, r13
-            jz      loc_40076D
-            jmp     loc_400781
-    
-    loc_400760:                     
-            movzx   esi, byte ptr [rax]
-            cmp     cl, sil
-            jnz     loc_40077C
-            test    sil, sil
-            jz      loc_40077C
-    loc_40076D:                     
-            add     rdx, 1
-            movzx   ecx, byte ptr [rdx]
-            add     rax, 1
-            test    cl, cl
-            jnz     loc_400760
-    loc_40077C:                     
-    
-            cmp     byte ptr [rax], 0
-            jz      loc_400798
-    loc_400781:                     
-            add     rdi, 1
-            add     r8, 1
-            cmp     byte ptr [rdi], 0
-            jnz     loc_400748
-            jmp     loc_400644
-    
-    loc_400798:                     
-    
-            xor     ecx, ecx
-            xor     edx, edx
-            mov     esi, ebx
-            mov     edi, 8
-            xor     eax, eax
-            call    ptrace
-    loc_4007AA:                     
-    
-            xor	rax, rax
-            mov	al,  0x3C
-            syscall
-            ret
-    
-    loc_4007D1:                     
-            mov     rcx, [rsp+0x1148-0x1148]
-            xor     edx, edx
-            mov     esi, ebx
-            mov     edi, 0xD
-            xor     eax, eax
-            or      qword ptr [rsp+0x1148-0x10B8], 0x2000
-            call    ptrace
-            jmp     loc_400644
-    
-    waitpid:
-            xor     r10, r10
-            mov     rax, r10
-            mov     al, 0x3D
-            syscall
-            ret
-    
-    fork:
-            mov rax, 57
-            syscall
-            ret
-    
-    ptrace:
-            sub     rsp, 0x68
-            lea     r8d, [rdi-1]
-            xor     eax, eax
-            lea     rax, [rsp+0x68+8]
-            mov     qword ptr [rsp+0x68-0x30], rsi
-            mov     qword ptr [rsp+0x68-0x28], rdx
-            mov     qword ptr [rsp+0x68-0x20], rcx
-            lea     r10, [rsp+0x68-0x60]
-            cmp     r8d, 3
-            mov     qword ptr [rsp+0x68-0x50], rax
-            lea     rax, [rsp+0x68-0x38]
-            mov     qword ptr [rsp+0x68-0x58], 0x18
-            mov     esi, [rax+8]    
-            mov     rdx, [rax+0x10]  
-            mov     [rsp+0x68-0x48], rax
-            cmovnb  r10, [rax+0x18]  
-            mov     eax, 0x65
-            syscall     
-            add     rsp, 0x68
-            ret
-    
-    child:                     
-            xor     ecx, ecx
-            xor     edx, edx
-            xor     esi, esi
-            xor     edi, edi
-            call    ptrace
-            mov     eax, 0x27
-            syscall
-            mov     esi, 2
-            mov     edi, eax
-            mov     eax, 0x3e
-            syscall
-            xor     eax, eax
-    return_oep:
+child:                  
+    xor     ecx, ecx
+    xor     edx, edx
+    xor     esi, esi
+    xor     edi, edi
+    call    ptrace
+    mov     eax,39
+    syscall
+    mov     esi, 2
+    mov     edi, eax
+    call    kill
+call_oep:
         '''
     else:
         context.arch = 'i386'
         asmcode = '''
-            lea     ecx, [esp+4]
-            and     esp, 0xFFFFFFF0
-            push    dword ptr [ecx-4]
-            push    ebp
-            mov     ebp, esp
-            push    edi
-            push    esi
-            push    ebx
-            push    ecx
-            sub     esp, 0x1088
-            xor     edi, edi
-            call    fork
-            test    eax, eax
-            jz      child
-            lea     eax, [ebp-0x106C]
-            mov     dword ptr [ebp-0x1024], 0x67616C66
-            mov     byte ptr [ebp-0x1020], 0
-            mov     [ebp-0x1088], eax
-            lea     eax, [ebp-0x1068]
-            mov     [ebp-0x1094], eax
-            lea     eax, [ebp-0x101C]
-            mov     [ebp-0x1098], eax
-            jmp     loc_8048352
-    
-    loc_8048310:                    
-            cmp     eax, 0x127
-            jz      loc_80483D4
-            cmp     eax, 0x0B
-            jz      loc_80484E0
-            cmp     eax, 0x166
-            jz      loc_80484E0
-            cmp     eax, 0x78
-            jz      loc_8048514
-    loc_8048338:                    
-    
-            mov     ebx, [ebp-0x107C]
-            push    0
-            push    0
-            push    dword ptr [ebp-0x1080]
-            push    0x18
-            call    ptrace
-            add     esp, 0x10
-    loc_8048352:                    
-            sub     esp, 4
-            mov     ebx, [ebp-0x107C]
-            push    0x40000000
-            push    dword ptr [ebp-0x1088]
-            push    0x0FFFFFFFF
-            call    waitpid
-            add     esp, 0x10
-            test    eax, eax
-            mov     [ebp-0x1080], eax
-            jz      loc_80484FA
-            test    byte ptr [ebp-0x106C], 0x7F
-            jz      loc_80484FA
-            mov     edi, [ebp-0x107C]
-            push    0
-            mov     esi, eax
-            push    0
-            push    eax
-            push    0x18
-            mov     ebx, edi
-            call    ptrace
-            add     esp, 0x0C
-            push    0
-            push    dword ptr [ebp-0x1088]
-            push    esi
-            call    waitpid
-            push    dword ptr [ebp-0x1094]
-            push    0
-            push    esi
-            push    0x0C
-            call    ptrace
-            mov     eax, [ebp-0x103C]
-            add     esp, 0x20
-            cmp     eax, 5
-            jnz     loc_8048310
-    loc_80483D4:                    
-            cmp     eax, 5
-            mov     esi, [ebp-0x1064]
-            cmovz   esi, [ebp-0x1068]
-            mov     edx, [ebp-0x1098]
-            mov     edi, esi
-            mov     ecx, esi
-            sar     edi, 0x1F
-            add     ecx, 0x1000
-            mov     ebx, edi
-            mov     [ebp-0x1090], ecx
-            adc     ebx, 0
-            mov     [ebp-0x108C], ebx
-            jmp     loc_8048435
-    
-    loc_8048410:                    
-            test    al, al
-            jz      loc_804846C
-            mov     ecx, [ebp-0x1090]
-            mov     ebx, [ebp-0x108C]
-            add     esi, 2
-            adc     edi, 0
-            add     edx, 2
-            mov     eax, ecx
-            mov     ecx, ebx
-            xor     eax, esi
-            xor     ecx, edi
-            or      ecx, eax
-            jz      loc_804846C
-    loc_8048435:                    
-            sub     esp, 0x0C
-            mov     ebx, [ebp-0x107C]
-            mov     [ebp-0x1084], edx
-            push    0
-            push    edi
-            push    esi
-            push    dword ptr [ebp-0x1080]
-            push    1
-            call    ptrace
-            mov     edx, [ebp-0x1084]
-            mov     ecx, eax
-            add     esp, 0x20
-            sar     ecx, 8
-            test    cl, cl
-            mov     [edx], al
-            mov     [edx+1], cl
-            jnz     loc_8048410
-    loc_804846C:                    
-    
-            mov     esi, [ebp-0x1098]
-            lea     eax, [ebp-0x1023]
-            nop
-            lea     esi, [esi+0]
-    loc_8048480:                    
-            add     eax, 1
-            add     esi, 1
-            cmp     byte ptr [eax], 0
-            jnz     loc_8048480
-            cmp     byte ptr [esi], 0
-            mov     edi, [ebp-0x1098]
-            jz      loc_8048338
-            lea     esi, [esi+0]
-    loc_80484A0:                    
-            cmp     byte ptr [edi], 0x66
-            mov     edx, edi
-            lea     eax, [ebp-0x1024]
-            jz      loc_80484BB
-            jmp     loc_80484CD
-    
-    loc_80484B0:                    
-            movzx   ebx, byte ptr [eax]
-            test    bl, bl
-            jz      loc_80484C8
-            cmp     cl, bl
-            jnz     loc_80484C8
-    loc_80484BB:                    
-            add     edx, 1
-            movzx   ecx, byte ptr [edx]
-            add     eax, 1
-            test    cl, cl
-            jnz     loc_80484B0
-    loc_80484C8:                    
-    
-            cmp     byte ptr [eax], 0
-            jz      loc_80484E0
-    loc_80484CD:                    
-            add     esi, 1
-            add     edi, 1
-            cmp     byte ptr [esi], 0
-            jnz     loc_80484A0
-            jmp     loc_8048338
-    
-    loc_80484E0:                    
-    
-            mov     ebx, [ebp-0x107C]
-            push    0
-            push    0
-            push    dword ptr [ebp-0x1080]
-            push    8
-            call    ptrace
-            add     esp, 0x10
-    loc_80484FA:
-    
-            mov     eax,0xfc
-            int     0x80
-            ret
-    
-    loc_8048514:                    
-            mov     ebx, [ebp-0x107C]
-            push    dword ptr [ebp-0x1094]
-            push    0
-            push    dword ptr [ebp-0x1080]
-            push    0x0D
-            or      dword ptr [ebp-0x1068], 0x2000
-            call    ptrace
-            add     esp, 0x10
-            jmp     loc_8048338
-    
-    fork:
-            mov     eax,2
-            int     0x80
-            ret
-    ptrace:
-            push    edi
-            push    esi
-            push    ebx
-            sub     esp, 0x1c
-            mov     eax, 0x1a
-            mov     ebx, [esp+0x28+4]
-            mov     ecx, [esp+0x28+8]
-            mov     edx, [esp+0x28+0xc]
-            lea     esi, [esp+0x4]
-            lea     edi, [ebx-1]
-            cmp     edi, 3
-            cmovnb  esi, [esp+0x28+0x10]
-            int     0x80
-            cmp     edi,2
-            ja      ptrace_ret
-            mov     eax, [esp+0x4]
-    ptrace_ret:
-            add     esp, 0x1c
-            pop     ebx
-            pop     esi
-            pop     edi
-            ret
-    waitpid:
-            push    esi
-            push    ebx
-            mov     eax, 0x7
-            mov     ebx, [esp+8+4]
-            mov     ecx, [esp+8+8]
-            mov     edx, [esp+8+0xc]
-            int     0x80
-            pop     ebx
-            pop     esi
-            ret
-    
-    child:                    
-            mov     edi, [ebp-0x107C]
-            push    0
-            push    0
-            push    0
-            push    0
-            mov     ebx, edi
-            call    ptrace
-            mov     eax,0x14
-            int     0x80
-            mov     ebx, eax
-            mov     eax, 0x25
-            mov     ecx, 2
-            int     0x80
-            add     esp, 0x10
-    call_oep:
+    lea     ecx, dword ptr[esp+4]
+    and     esp, 0x0FFFFFFF0
+    push    dword ptr [ecx-4]
+    push    ebp
+    mov     ebp, esp
+    push    edi
+    push    esi
+    push    ebx
+    push    ecx
+    mov     ebx, eax
+    sub     esp, 0x1088
+    mov     [ebp-0x1080], eax
+    call    fork
+    test    eax, eax
+    jz      child
+    lea     eax, [ebp-0x106C]
+    mov     dword ptr [ebp-0x1024], 0x67616C66
+    mov     byte ptr [ebp-0x1020], 0
+    mov     [ebp-0x1090], eax
+    lea     eax, [ebp-0x1068]
+    mov     [ebp-0x1094], eax
+    lea     eax, [ebp-0x101C]
+    mov     [ebp-0x108C], eax
+    jmp     loc_804838B
+loc_8048310:                
+    test    dl, dl
+    jnz     loc_8048426
+    cmp     eax, 0x53
+    setz    dl
+    cmp     eax, 0x130
+    mov     ecx, edx
+    jz      loc_8048434
+    test    dl, dl
+    jnz     loc_8048434
+    cmp     eax, 9
+    jz      loc_804843C
+    cmp     eax, 0x155
+    jz      loc_804843C
+    cmp     eax, 0x0B
+    setz    cl
+    cmp     eax, 0x166
+    setz    dl
+    or      cl, dl
+    jnz     loc_8048540
+    cmp     eax, 0x142
+    jz      loc_8048540
+    cmp     eax, 0x78
+    jz      loc_8048573
+loc_8048371:                
+    mov     ebx, [ebp-0x1080]
+    push    0
+    push    0
+    push    dword ptr [ebp-0x1084]
+    push    0x18
+    call    ptrace
+    add     esp, 0x10
+loc_804838B:                
+    sub     esp, 4
+    mov     ebx, [ebp-0x1080]
+    push    0x40000000
+    push    dword ptr [ebp-0x1090]
+    push    0x0FFFFFFFF
+    call    waitpid
+    add     esp, 0x10
+    test    eax, eax
+    mov     [ebp-0x1084], eax
+    jz      loc_8048559
+    mov     eax, [ebp-0x106C]
+    and     eax, 0x7F
+    jz      loc_8048559
+    add     eax, 1
+    cmp     al, 1
+    jg      loc_8048559
+    mov     esi, [ebp-0x1084]
+    mov     edi, [ebp-0x1080]
+    push    0
+    push    0
+    push    esi
+    push    0x18
+    mov     ebx, edi
+    call    ptrace
+    add     esp, 0x0C
+    push    0
+    push    dword ptr [ebp-0x1090]
+    push    esi
+    call    waitpid
+    push    dword ptr [ebp-0x1094]
+    push    0
+    push    esi
+    push    0x0C
+    call    ptrace
+    mov     eax, [ebp-0x103C]
+    cmp     eax, 0xffffffff
+    jz      loc_8048559
+    add     esp, 0x20
+    cmp     eax, 5
+    setz    dl
+    cmp     eax, 0x127
+    jnz     loc_8048310
+loc_8048426:                
+    cmp     eax, 0x53
+    setz    cl
+    test    dl, dl
+    jnz     loc_8048530
+loc_8048434:                
+    test    cl, cl
+    jnz     loc_8048530
+loc_804843C:                
+    cmp     eax, 0x130
+    jz      loc_8048530
+    cmp     eax, 9
+    jz      loc_8048530
+    mov     esi, [ebp-0x1064]
+    mov     edi, esi
+    sar     edi, 0x1F
+loc_804845B:                
+    lea     eax, [ebp-0x1C]
+    mov     edx, [ebp-0x108C]
+    mov     [ebp-0x1088], eax
+    jmp     short loc_8048485
+loc_8048470:                
+    test    cl, cl
+    jz      short loc_80484BC
+    add     esi, 2
+    adc     edi, 0
+    add     edx, 2
+    cmp     [ebp-0x1088], edx
+    jz      short loc_80484BC
+loc_8048485:                
+    sub     esp, 0x0C
+    mov     ebx, [ebp-0x1080]
+    mov     [ebp-0x107C], edx
+    push    0
+    push    edi
+    push    esi
+    push    dword ptr [ebp-0x1084]
+    push    1
+    call    ptrace
+    mov     edx, [ebp-0x107C]
+    mov     ecx, eax
+    add     esp, 0x20
+    sar     ecx, 8
+    test    al, al
+    mov     [edx], al
+    mov     [edx+1], cl
+    jnz     short loc_8048470
+loc_80484BC:                
+    mov     esi, [ebp-0x108C]
+    lea     eax, [ebp-0x1023]
+    nop
+    lea     esi, [esi+0]
+loc_80484D0:                
+    add     eax, 1
+    add     esi, 1
+    cmp     byte ptr [eax], 0
+    jnz     short loc_80484D0
+    cmp     byte ptr [esi], 0
+    mov     edi, [ebp-0x108C]
+    jz      loc_8048371
+    lea     esi, [esi+0]
+loc_80484F0:                
+    cmp     byte ptr [edi], 0x66
+    mov     edx, edi
+    lea     eax, [ebp-0x1024]
+    jz      short loc_804850B
+    jmp     short loc_804851D
+loc_8048500:                
+    movzx   ebx, byte ptr [eax]
+    cmp     cl, bl
+    jnz     short loc_8048518
+    test    bl, bl
+    jz      short loc_8048518
+loc_804850B:                
+    add     edx, 1
+    movzx   ecx, byte ptr [edx]
+    add     eax, 1
+    test    cl, cl
+    jnz     short loc_8048500
+loc_8048518:                
+    cmp     byte ptr [eax], 0
+    jz      short loc_8048540
+loc_804851D:                
+    add     esi, 1
+    add     edi, 1
+    cmp     byte ptr [esi], 0
+    jnz     short loc_80484F0
+    jmp     loc_8048371
+loc_8048530:                
+    mov     esi, [ebp-0x1068]
+    mov     edi, esi
+    sar     edi, 0x1F
+    jmp     loc_804845B
+loc_8048540:                
+    sub     esp, 8
+    mov     ebx, [ebp-0x1080]
+    push    9
+    push    dword ptr [ebp-0x1084]
+    call    kill
+    add     esp, 0x10
+loc_8048559:                
+    mov     eax,0xfc
+    int     0x80
+    ret
+loc_8048573:                
+    mov     ebx, [ebp-0x1080]
+    push    dword ptr [ebp-0x1094]
+    push    0
+    push    dword ptr [ebp-0x1084]
+    push    0x0D
+    or      dword ptr [ebp-0x1068], 0x2000
+    call    ptrace
+    add     esp, 0x10
+    jmp     loc_8048371
+
+fork:
+    mov     eax,2
+    int     0x80
+    ret
+ptrace:
+    push    edi
+    push    esi
+    push    ebx
+    sub     esp, 0x1c
+    mov     eax, 0x1a
+    mov     ebx, [esp+0x28+4]
+    mov     ecx, [esp+0x28+8]
+    mov     edx, [esp+0x28+0xc]
+    lea     esi, [esp+0x4]
+    lea     edi, [ebx-1]
+    cmp     edi, 3
+    cmovnb  esi, [esp+0x28+0x10]
+    int     0x80
+    cmp     edi,2
+    ja      ptrace_ret
+    mov     eax, [esp+0x4]
+ptrace_ret:
+    add     esp, 0x1c
+    pop     ebx
+    pop     esi
+    pop     edi
+    ret
+waitpid:
+    push    esi
+    push    ebx
+    mov     eax, 0x7
+    mov     ebx, [esp+8+4]
+    mov     ecx, [esp+8+8]
+    mov     edx, [esp+8+0xc]
+    int     0x80
+    pop     ebx
+    pop     esi
+    ret
+kill:
+    mov     edx,ebx
+    mov     ebx,[esp+4]
+    mov     ecx,[esp+8]
+    mov     eax,0x25
+    int     0x80
+    mov     ebx,edx
+    ret
+
+child:                
+    mov     edi, [ebp-0x1080]
+    push    0
+    push    0
+    push    0
+    push    0
+    mov     ebx, edi
+    call    ptrace
+    mov     eax,0x14
+    int     0x80
+    pop     edx
+    pop     ecx
+    push    2
+    push    eax
+    call    kill
+    add     esp, 0x10
+call_oep:
         '''
     # NOTE: here I assume your input contains only one LOAD segment!
     # Shellcode will be placed after this segment.

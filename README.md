@@ -3,7 +3,7 @@ Yet another sandbox for CTF challenge in AWD mode
 
 This is a ptrace sandbox. ~~(It was a chroot sandbox)~~
 
-It will send PTRACE_KILL under certain circumstances:
+It will send SIG_KILL under certain circumstances:
 
 * Child process attempting to open files with 'flag' in its name by open/openat/name_to_handle_at. (/tmp/asdflagasd etc.)
 * Child process attempting to create a symlink or hardlink for file with 'flag' in its name by symlink/symlinkat/link.

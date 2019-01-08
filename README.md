@@ -45,7 +45,7 @@ There will be a binary output named binary_sandbox in your binary's folder
 
 * ~~Centos **NOT supported**~~
 * Might crash on ELF contains multi loadable segments. (I haven't seen this type of ELF yet)
-* Sandbox might be bypassable, but it isn't designed as an impenetrable shield anyway.
+* Sandbox might be bypassable, but it isn't designed as an impenetrable shield anyway. (issues are welcome.)
 * DO NOT use newest lief or you will be fucked when processing non-pie ELF32 file.
 
 ## TODO
